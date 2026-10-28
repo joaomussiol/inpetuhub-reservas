@@ -11,6 +11,12 @@ public class RecursoService implements IRecursoService {
     private final IRecursoRepository repository;
 
     public RecursoService(IRecursoRepository repository) {
+        if (repository == null) {
+            throw new IllegalArgumentException(
+                    "O repositório de recursos é obrigatório."
+            );
+        }
+
         this.repository = repository;
     }
 

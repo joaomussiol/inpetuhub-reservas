@@ -12,8 +12,15 @@ public class AgendaService implements IAgendaService {
     private final IAgendaRepository repository;
 
     public AgendaService(IAgendaRepository repository) {
+        if (repository == null) {
+            throw new IllegalArgumentException(
+                    "O repositório de reservas é obrigatório."
+            );
+        }
+
         this.repository = repository;
     }
+
 
     @Override
     public void gravar(Agenda agenda) {

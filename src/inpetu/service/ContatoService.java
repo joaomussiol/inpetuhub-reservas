@@ -11,6 +11,12 @@ public class ContatoService implements IContatoService {
     private final IContatoRepository repository;
 
     public ContatoService(IContatoRepository repository) {
+        if (repository == null) {
+            throw new IllegalArgumentException(
+                    "O repositório de contatos é obrigatório."
+            );
+        }
+
         this.repository = repository;
     }
 
