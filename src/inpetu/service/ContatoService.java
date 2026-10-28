@@ -1,3 +1,4 @@
+
 package inpetu.service;
 
 import inpetu.model.Contato;
@@ -7,7 +8,7 @@ import java.util.Optional;
 
 public class ContatoService implements IContatoService {
 
-    private IContatoRepository repository;
+    private final IContatoRepository repository;
 
     public ContatoService(IContatoRepository repository) {
         this.repository = repository;
@@ -15,23 +16,41 @@ public class ContatoService implements IContatoService {
 
     @Override
     public void gravar(Contato contato) {
-        this.repository.gravar(contato);
+        if (contato == null) {
+            throw new IllegalArgumentException("O contato não pode ser nulo.");
+        }
+
+        if (contato.getNome() == null || contato.getNome().isBlank()) {
+            throw new IllegalArgumentException("O nome do contato é obrigatório.");
+        }
+
+        repository.gravar(contato);
     }
 
     @Override
     public void remover(Contato contato) {
-        this.repository.remover(contato);
-    }
+        if (contato == null) {
+            throw new IllegalArgumentException("O contato não pode ser nulo.");
+        }
 
+        repository.remover(contato);
+    }
 
     @Override
     public Optional<Contato> buscarPorId(int id) {
-        return this.repository.buscarPorId(id);
+        if (id <= 0) {
+            throw new IllegalArgumentException("O ID deve ser maior que zero.");
+        }
+
+        return repository.buscarPorId(id);
     }
 
     @Override
     public Optional<Contato> buscarPorNome(String nome) {
-        return this.repository.buscarPorNome(nome);
-    }
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("O nome para busca é obrigatório.");
+        }
 
+        return repository.buscarPorNome(nome.trim());
+    }
 }

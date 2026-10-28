@@ -42,7 +42,9 @@ public class ContatoMemoryRepository implements
 
     @Override
     public void remover(Contato contato) {
-        throw new RuntimeException("TODO: Implementar");
+        if (contato != null) {
+            this.armazenamento.remove(contato.getId());
+        }
     }
 
 }
