@@ -111,7 +111,21 @@ public class AgendaService implements IAgendaService {
     @Override
     public void remover(Agenda agenda) {
         if (agenda == null) {
-            throw new IllegalArgumentException("A reserva não pode ser nula.");
+            throw new IllegalArgumentException(
+                    "A reserva não pode ser nula."
+            );
+        }
+
+        if (agenda.getId() <= 0) {
+            throw new IllegalArgumentException(
+                    "O ID deve ser maior que zero."
+            );
+        }
+
+        if (repository.buscarPorId(agenda.getId()).isEmpty()) {
+            throw new IllegalArgumentException(
+                    "A reserva informada não está cadastrada."
+            );
         }
 
         repository.remover(agenda);
@@ -130,4 +144,6 @@ public class AgendaService implements IAgendaService {
     public List<Agenda> listarTodos() {
         return repository.listarTodos();
     }
+
+
 }

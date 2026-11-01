@@ -342,7 +342,6 @@ public class Application {
         contatoNovo.setTelefone("48999990004");
         contatoNovo.setId(contatoAtualizar.getId());
 
-        contatoService.atualizar(contatoNovo);
         try {
             contatoService.atualizar(contatoNovo);
 
@@ -365,9 +364,6 @@ public class Application {
         Contato contatoLista2 = new Contato("Lucas");
         contatoLista2.setCnpj("12345678000126");
         contatoLista2.setTelefone("48999990006");
-
-        contatoService.gravar(contatoLista1);
-        contatoService.gravar(contatoLista2);
 
         contatoService.gravar(contatoLista1);
         contatoService.gravar(contatoLista2);
@@ -545,6 +541,85 @@ public class Application {
         System.out.println("Reserva original: " + agendaService.buscarPorId(1));
 
 //=================================================================================================
+
+        System.out.println("\n--- TESTE 26: Remover reserva com ID inválido ---");
+
+        Agenda reservaIdInvalido = new Agenda(
+                0,
+                contato1,
+                sala,
+                inicio,
+                fim
+        );
+
+        try {
+            agendaService.remover(reservaIdInvalido);
+            System.out.println("ERRO: reserva com ID inválido foi removida.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 27: Remover reserva com ID negativo ---");
+
+        Agenda reservaIdNegativo = new Agenda(
+                -1,
+                contato1,
+                sala,
+                inicio,
+                fim
+        );
+
+        try {
+            agendaService.remover(reservaIdNegativo);
+            System.out.println("ERRO: reserva com ID negativo foi removida.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 28: Remover reserva inexistente ---");
+
+        Agenda reservaInexistente = new Agenda(
+                999,
+                contato1,
+                sala,
+                inicio,
+                fim
+        );
+
+        try {
+            agendaService.remover(reservaInexistente);
+            System.out.println("ERRO: reserva inexistente foi removida.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 29: Remover reserva válida ---");
+
+        Agenda reservaRemover = agendaService.buscarPorId(8)
+                .orElseThrow();
+
+        try {
+            agendaService.remover(reservaRemover);
+
+            System.out.println("SUCESSO: reserva removida.");
+            System.out.println("Consulta após remoção: "
+                    + agendaService.buscarPorId(8));
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+
+//=================================================================================================
+
         // Resultado final
         System.out.println("\n--- RESULTADO FINAL ---");
         System.out.println(
@@ -555,4 +630,5 @@ public class Application {
         agendaService.listarTodos().forEach(System.out::println);
 
     }
+
 }
