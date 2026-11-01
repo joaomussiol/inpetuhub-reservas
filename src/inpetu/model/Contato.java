@@ -4,7 +4,7 @@ public class Contato {
     private int id;
     private String nome;
     private String cnpj;
-    private int telefone;
+    private String telefone;
 
     public Contato(String nome) {
         this.nome = nome;
@@ -22,9 +22,9 @@ public class Contato {
 
     public void setCnpj(String cnpj) { this.cnpj = cnpj; }
 
-    public int getTelefone() { return telefone; }
+    public String getTelefone() { return telefone; }
 
-    public void setTelefone(int telefone) { this.telefone = telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
 
     public String getNome() {
         return nome;

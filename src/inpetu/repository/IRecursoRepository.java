@@ -1,15 +1,19 @@
-
 package inpetu.repository;
 
 import inpetu.model.Recurso;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IRecursoRepository {
 
     void gravar(Recurso recurso);
 
+    void atualizar(Recurso recurso);
+
     void remover(Recurso recurso);
 
     Optional<Recurso> buscarPorId(int id);
+
+    List<Recurso> listarTodos();
 }

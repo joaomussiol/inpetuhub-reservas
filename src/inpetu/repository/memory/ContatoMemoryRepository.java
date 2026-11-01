@@ -6,6 +6,8 @@ import inpetu.repository.IContatoRepository;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 
 public class ContatoMemoryRepository implements
         IContatoRepository {
@@ -45,6 +47,16 @@ public class ContatoMemoryRepository implements
         if (contato != null) {
             this.armazenamento.remove(contato.getId());
         }
+    }
+
+    @Override
+    public void atualizar(Contato contato) {
+        this.armazenamento.put(contato.getId(), contato);
+    }
+
+    @Override
+    public List<Contato> listarTodos() {
+        return new ArrayList<>(this.armazenamento.values());
     }
 
 }

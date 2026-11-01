@@ -4,6 +4,7 @@ package inpetu.service;
 import inpetu.model.Contato;
 import inpetu.repository.IContatoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ContatoService implements IContatoService {
@@ -34,6 +35,27 @@ public class ContatoService implements IContatoService {
     }
 
     @Override
+    public void atualizar(Contato contato) {
+        if (contato == null) {
+            throw new IllegalArgumentException("O contato não pode ser nulo.");
+        }
+
+        if (contato.getId() <= 0) {
+            throw new IllegalArgumentException("O ID deve ser maior que zero.");
+        }
+
+        if (contato.getNome() == null || contato.getNome().isBlank()) {
+            throw new IllegalArgumentException("O nome do contato é obrigatório.");
+        }
+
+        if (repository.buscarPorId(contato.getId()).isEmpty()) {
+            throw new IllegalArgumentException("Contato não encontrado.");
+        }
+
+        repository.atualizar(contato);
+    }
+
+    @Override
     public void remover(Contato contato) {
         if (contato == null) {
             throw new IllegalArgumentException("O contato não pode ser nulo.");
@@ -58,5 +80,10 @@ public class ContatoService implements IContatoService {
         }
 
         return repository.buscarPorNome(nome.trim());
+    }
+
+    @Override
+    public List<Contato> listarTodos() {
+        return repository.listarTodos();
     }
 }

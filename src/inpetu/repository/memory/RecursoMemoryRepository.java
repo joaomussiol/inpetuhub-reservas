@@ -7,6 +7,8 @@ import inpetu.repository.IRecursoRepository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
+import java.util.ArrayList;
 
 public class RecursoMemoryRepository implements IRecursoRepository {
 
@@ -14,7 +16,9 @@ public class RecursoMemoryRepository implements IRecursoRepository {
 
     @Override
     public void gravar(Recurso recurso) {
-        armazenamento.put(recurso.getId(), recurso);
+        if (recurso != null) {
+            armazenamento.put(recurso.getId(), recurso);
+        }
     }
 
     @Override
@@ -25,7 +29,19 @@ public class RecursoMemoryRepository implements IRecursoRepository {
     }
 
     @Override
+    public void atualizar(Recurso recurso) {
+        if (recurso != null) {
+            armazenamento.put(recurso.getId(), recurso);
+        }
+    }
+
+    @Override
     public Optional<Recurso> buscarPorId(int id) {
         return Optional.ofNullable(armazenamento.get(id));
+    }
+
+    @Override
+    public List<Recurso> listarTodos() {
+        return new ArrayList<>(armazenamento.values());
     }
 }
