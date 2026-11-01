@@ -224,7 +224,7 @@ public class Application {
 
         System.out.println("\n--- TESTE 9: Atualizar reserva ---");
 
-        Agenda reservaAtualizada = new Agenda(
+        Agenda agendaAtualizada = new Agenda(
                 1,
                 contato1,
                 sala,
@@ -233,7 +233,7 @@ public class Application {
         );
 
         try {
-            agendaService.gravar(reservaAtualizada);
+            agendaService.atualizar(agendaAtualizada);
             System.out.println("SUCESSO: reserva atualizada.");
             System.out.println(agendaService.buscarPorId(1));
         } catch (IllegalArgumentException e) {
@@ -253,7 +253,7 @@ public class Application {
         );
 
         try {
-            agendaService.gravar(reservaComConflito);
+            agendaService.atualizar(reservaComConflito);
             System.out.println("ERRO: deveria bloquear o conflito.");
         } catch (IllegalArgumentException e) {
             System.out.println("SUCESSO: conflito bloqueado.");
@@ -511,7 +511,7 @@ public class Application {
         );
 
         try {
-            agendaService.gravar(atualizacaoContatoInexistente);
+            agendaService.atualizar(atualizacaoContatoInexistente);
             System.out.println("ERRO: atualização com contato inexistente foi aceita.");
         } catch (IllegalArgumentException e) {
             System.out.println("SUCESSO: atualização bloqueada.");
@@ -519,7 +519,9 @@ public class Application {
         }
 
         System.out.println("Reserva original: " + agendaService.buscarPorId(1));
+
 //=================================================================================================
+
         System.out.println("\n--- TESTE 25: Atualização com recurso inexistente ---");
 
         Agenda atualizacaoRecursoInexistente = new Agenda(
@@ -531,7 +533,7 @@ public class Application {
         );
 
         try {
-            agendaService.gravar(atualizacaoRecursoInexistente);
+            agendaService.atualizar(atualizacaoRecursoInexistente);
             System.out.println("ERRO: atualização com recurso inexistente foi aceita.");
         } catch (IllegalArgumentException e) {
             System.out.println("SUCESSO: atualização bloqueada.");
@@ -616,6 +618,83 @@ public class Application {
 
         } catch (IllegalArgumentException e) {
             System.out.println("ERRO: " + e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 30: Remover contato com ID inválido ---");
+
+        Contato contatoIdInvalido = new Contato("Contato inválido");
+        contatoIdInvalido.setId(0);
+
+        try {
+            contatoService.remover(contatoIdInvalido);
+            System.out.println("ERRO: contato com ID inválido foi removido.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 30: Remover contato com ID inválido ---");
+
+        Contato contatoIdInvalidoRemocao = new Contato("Contato inválido");
+        contatoIdInvalidoRemocao.setId(0);
+
+        try {
+            contatoService.remover(contatoIdInvalidoRemocao);
+            System.out.println("ERRO: contato com ID inválido foi removido.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 31: Remover contato inexistente ---");
+
+        Contato contatoNaoCadastrado = new Contato("Contato inexistente");
+        contatoNaoCadastrado.setId(999);
+
+        try {
+            contatoService.remover(contatoNaoCadastrado);
+            System.out.println("ERRO: contato inexistente foi removido.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 32: Remover recurso com ID inválido ---");
+
+        Recurso recursoIdInvalido = new Recurso(
+                0, "Recurso inválido", "Recurso de teste"
+        );
+
+        try {
+            recursoService.remover(recursoIdInvalido);
+            System.out.println("ERRO: recurso com ID inválido foi removido.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 33: Remover recurso inexistente ---");
+
+        Recurso recursoNaoCadastrado = new Recurso(
+                999, "Recurso inexistente", "Recurso de teste"
+        );
+
+        try {
+            recursoService.remover(recursoNaoCadastrado);
+            System.out.println("ERRO: recurso inexistente foi removido.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
         }
 
 //=================================================================================================

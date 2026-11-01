@@ -45,6 +45,31 @@ public class AgendaService implements IAgendaService {
 
     @Override
     public void gravar(Agenda agenda) {
+        validarAgenda(agenda);
+
+        if (repository.buscarPorId(agenda.getId()).isPresent()) {
+            throw new IllegalArgumentException(
+                    "Já existe uma reserva cadastrada com esse ID."
+            );
+        }
+
+        repository.gravar(agenda);
+    }
+
+    @Override
+    public void atualizar(Agenda agenda) {
+        validarAgenda(agenda);
+
+        if (repository.buscarPorId(agenda.getId()).isEmpty()) {
+            throw new IllegalArgumentException(
+                    "A reserva informada não está cadastrada."
+            );
+        }
+
+        repository.atualizar(agenda);
+    }
+
+    private void validarAgenda(Agenda agenda) {
         if (agenda == null) {
             throw new IllegalArgumentException("A reserva não pode ser nula.");
         }
@@ -104,8 +129,6 @@ public class AgendaService implements IAgendaService {
                     "O recurso já possui uma reserva nesse horário."
             );
         }
-
-        repository.gravar(agenda);
     }
 
     @Override
@@ -144,6 +167,4 @@ public class AgendaService implements IAgendaService {
     public List<Agenda> listarTodos() {
         return repository.listarTodos();
     }
-
-
 }

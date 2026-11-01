@@ -49,7 +49,21 @@ public class RecursoService implements IRecursoService {
     @Override
     public void remover(Recurso recurso) {
         if (recurso == null) {
-            throw new IllegalArgumentException("O recurso não pode ser nulo.");
+            throw new IllegalArgumentException(
+                    "O recurso não pode ser nulo."
+            );
+        }
+
+        if (recurso.getId() <= 0) {
+            throw new IllegalArgumentException(
+                    "O ID deve ser maior que zero."
+            );
+        }
+
+        if (repository.buscarPorId(recurso.getId()).isEmpty()) {
+            throw new IllegalArgumentException(
+                    "O recurso informado não está cadastrado."
+            );
         }
 
         boolean possuiReserva = agendaService.listarTodos().stream()

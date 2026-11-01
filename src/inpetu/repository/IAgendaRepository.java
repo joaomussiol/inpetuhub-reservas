@@ -10,6 +10,8 @@ public interface IAgendaRepository {
 
     void gravar(Agenda agenda);
 
+    void atualizar(Agenda agenda);
+
     void remover(Agenda agenda);
 
     Optional<Agenda> buscarPorId(int id);

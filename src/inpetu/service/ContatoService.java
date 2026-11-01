@@ -76,7 +76,21 @@ public class ContatoService implements IContatoService {
     @Override
     public void remover(Contato contato) {
         if (contato == null) {
-            throw new IllegalArgumentException("O contato não pode ser nulo.");
+            throw new IllegalArgumentException(
+                    "O contato não pode ser nulo."
+            );
+        }
+
+        if (contato.getId() <= 0) {
+            throw new IllegalArgumentException(
+                    "O ID deve ser maior que zero."
+            );
+        }
+
+        if (repository.buscarPorId(contato.getId()).isEmpty()) {
+            throw new IllegalArgumentException(
+                    "O contato informado não está cadastrado."
+            );
         }
 
         boolean possuiReserva = agendaService.listarTodos().stream()

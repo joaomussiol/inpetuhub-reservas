@@ -35,4 +35,11 @@ public class AgendaMemoryRepository implements IAgendaRepository {
     public List<Agenda> listarTodos() {
         return new ArrayList<>(armazenamento.values());
     }
+
+    @Override
+    public void atualizar(Agenda agenda) {
+        if (agenda != null && armazenamento.containsKey(agenda.getId())) {
+            armazenamento.put(agenda.getId(), agenda);
+        }
+    }
 }
