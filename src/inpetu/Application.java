@@ -704,6 +704,27 @@ public class Application {
 
 //=================================================================================================
 
+        System.out.println("\n--- TESTE 35: Bloquear cadastro de contato com ID duplicado ---");
+
+        Contato contatoDuplicado = new Contato("Roberto");
+        contatoDuplicado.setCnpj("98765432000199");
+        contatoDuplicado.setTelefone("48988887777");
+
+// Atribuindo o mesmo ID do contato Carlos
+        contatoDuplicado.setId(contato1.getId());
+
+        try {
+            contatoService.gravar(contatoDuplicado);
+            System.out.println("ERRO: O sistema permitiu um ID duplicado.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: " + e.getMessage());
+        }
+
+        System.out.println("Contato original mantido: "
+                + contatoService.buscarPorId(contato1.getId()));
+
+//=================================================================================================
+
         // Resultado final
         System.out.println("\n--- RESULTADO FINAL ---");
         System.out.println(

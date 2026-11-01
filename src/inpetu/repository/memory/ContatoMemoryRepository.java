@@ -36,9 +36,22 @@ public class ContatoMemoryRepository implements
 
     @Override
     public void gravar(Contato contato) {
+        if (contato == null) {
+            throw new IllegalArgumentException("O contato não pode ser nulo.");
+        }
+
+        if (contato.getId() < 0) {
+            throw new IllegalArgumentException("O ID não pode ser negativo.");
+        }
+
         if (contato.getId() == 0) {
             contato.setId(this.proximoId++);
         }
+
+        if (this.armazenamento.containsKey(contato.getId())) {
+            throw new IllegalArgumentException("Já existe um contato cadastrado com esse ID.");
+        }
+
         this.armazenamento.put(contato.getId(), contato);
     }
 
