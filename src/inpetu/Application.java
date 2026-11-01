@@ -17,16 +17,30 @@ public class Application {
 
     public static void main(String[] args) {
 
-        // Repositórios e serviços
-        AgendaService agendaService = new AgendaService(new AgendaMemoryRepository());
+// Repositórios
+        AgendaMemoryRepository agendaRepository =
+                new AgendaMemoryRepository();
+
+        ContatoMemoryRepository contatoRepository =
+                new ContatoMemoryRepository();
+
+        RecursoMemoryRepository recursoRepository =
+                new RecursoMemoryRepository();
+
+// Serviços
+        AgendaService agendaService = new AgendaService(
+                agendaRepository,
+                contatoRepository,
+                recursoRepository
+        );
 
         ContatoService contatoService = new ContatoService(
-                new ContatoMemoryRepository(),
+                contatoRepository,
                 agendaService
         );
 
         RecursoService recursoService = new RecursoService(
-                new RecursoMemoryRepository(),
+                recursoRepository,
                 agendaService
         );
 
@@ -440,6 +454,97 @@ public class Application {
 
 //=================================================================================================
 
+        System.out.println("\n--- TESTE 22: Contato inexistente ---");
+
+        Contato contatoInexistente = new Contato("Contato Fantasma");
+        contatoInexistente.setId(999);
+
+        Agenda reservaContatoInexistente = new Agenda(
+                30,
+                contatoInexistente,
+                sala,
+                LocalDateTime.of(2026, 11, 11, 10, 0),
+                LocalDateTime.of(2026, 11, 11, 11, 0)
+        );
+
+        try {
+            agendaService.gravar(reservaContatoInexistente);
+            System.out.println("ERRO: contato inexistente foi aceito.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: contato inexistente bloqueado.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 23: Recurso inexistente ---");
+
+        Recurso recursoInexistente = new Recurso(
+                999, "Sala inexistente", "Recurso de teste"
+        );
+
+        Agenda reservaRecursoInexistente = new Agenda(
+                31,
+                contato1,
+                recursoInexistente,
+                LocalDateTime.of(2026, 11, 11, 10, 0),
+                LocalDateTime.of(2026, 11, 11, 11, 0)
+        );
+
+        try {
+            agendaService.gravar(reservaRecursoInexistente);
+            System.out.println("ERRO: recurso inexistente foi aceito.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: recurso inexistente bloqueado.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 24: Atualização com contato inexistente ---");
+
+        Contato contatoInexistenteAtualizacao = new Contato("Contato Fantasma");
+        contatoInexistenteAtualizacao.setId(999);
+
+        Agenda atualizacaoContatoInexistente = new Agenda(
+                1,
+                contatoInexistenteAtualizacao,
+                sala,
+                LocalDateTime.of(2026, 11, 11, 10, 0),
+                LocalDateTime.of(2026, 11, 11, 11, 0)
+        );
+
+        try {
+            agendaService.gravar(atualizacaoContatoInexistente);
+            System.out.println("ERRO: atualização com contato inexistente foi aceita.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: atualização bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("Reserva original: " + agendaService.buscarPorId(1));
+//=================================================================================================
+        System.out.println("\n--- TESTE 25: Atualização com recurso inexistente ---");
+
+        Agenda atualizacaoRecursoInexistente = new Agenda(
+                1,
+                contato1,
+                recursoInexistente,
+                LocalDateTime.of(2026, 11, 11, 10, 0),
+                LocalDateTime.of(2026, 11, 11, 11, 0)
+        );
+
+        try {
+            agendaService.gravar(atualizacaoRecursoInexistente);
+            System.out.println("ERRO: atualização com recurso inexistente foi aceita.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: atualização bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("Reserva original: " + agendaService.buscarPorId(1));
+
+//=================================================================================================
         // Resultado final
         System.out.println("\n--- RESULTADO FINAL ---");
         System.out.println(

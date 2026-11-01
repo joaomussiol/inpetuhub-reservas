@@ -3,6 +3,8 @@ package inpetu.service;
 
 import inpetu.model.Agenda;
 import inpetu.repository.IAgendaRepository;
+import inpetu.repository.IContatoRepository;
+import inpetu.repository.IRecursoRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,17 +12,36 @@ import java.util.Optional;
 public class AgendaService implements IAgendaService {
 
     private final IAgendaRepository repository;
+    private final IContatoRepository contatoRepository;
+    private final IRecursoRepository recursoRepository;
 
-    public AgendaService(IAgendaRepository repository) {
+    public AgendaService(
+            IAgendaRepository repository,
+            IContatoRepository contatoRepository,
+            IRecursoRepository recursoRepository
+    ) {
         if (repository == null) {
             throw new IllegalArgumentException(
                     "O repositório de reservas é obrigatório."
             );
         }
 
-        this.repository = repository;
-    }
+        if (contatoRepository == null) {
+            throw new IllegalArgumentException(
+                    "O repositório de contatos é obrigatório."
+            );
+        }
 
+        if (recursoRepository == null) {
+            throw new IllegalArgumentException(
+                    "O repositório de recursos é obrigatório."
+            );
+        }
+
+        this.repository = repository;
+        this.contatoRepository = contatoRepository;
+        this.recursoRepository = recursoRepository;
+    }
 
     @Override
     public void gravar(Agenda agenda) {
@@ -38,6 +59,24 @@ public class AgendaService implements IAgendaService {
 
         if (agenda.getRecurso() == null) {
             throw new IllegalArgumentException("O recurso é obrigatório.");
+        }
+
+        if (agenda.getContato().getId() <= 0
+                || contatoRepository.buscarPorId(
+                agenda.getContato().getId()
+        ).isEmpty()) {
+            throw new IllegalArgumentException(
+                    "O contato informado não está cadastrado."
+            );
+        }
+
+        if (agenda.getRecurso().getId() <= 0
+                || recursoRepository.buscarPorId(
+                agenda.getRecurso().getId()
+        ).isEmpty()) {
+            throw new IllegalArgumentException(
+                    "O recurso informado não está cadastrado."
+            );
         }
 
         if (agenda.getInicio() == null || agenda.getFim() == null) {
