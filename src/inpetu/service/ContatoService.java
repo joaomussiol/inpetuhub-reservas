@@ -1,7 +1,7 @@
+
 package inpetu.service;
 
 import inpetu.model.Contato;
-import inpetu.model.Agenda;
 import inpetu.repository.IContatoRepository;
 
 import java.util.List;
@@ -29,15 +29,27 @@ public class ContatoService implements IContatoService {
         this.agendaService = agendaService;
     }
 
+    private void validarDadosObrigatorios(Contato contato) {
+        if (contato.getNome() == null || contato.getNome().isBlank()) {
+            throw new IllegalArgumentException("O nome do contato é obrigatório.");
+        }
+
+        if (contato.getCnpj() == null || contato.getCnpj().isBlank()) {
+            throw new IllegalArgumentException("O CNPJ do contato é obrigatório.");
+        }
+
+        if (contato.getTelefone() == null || contato.getTelefone().isBlank()) {
+            throw new IllegalArgumentException("O telefone do contato é obrigatório.");
+        }
+    }
+
     @Override
     public void gravar(Contato contato) {
         if (contato == null) {
             throw new IllegalArgumentException("O contato não pode ser nulo.");
         }
 
-        if (contato.getNome() == null || contato.getNome().isBlank()) {
-            throw new IllegalArgumentException("O nome do contato é obrigatório.");
-        }
+        validarDadosObrigatorios(contato);
 
         repository.gravar(contato);
     }
@@ -52,9 +64,7 @@ public class ContatoService implements IContatoService {
             throw new IllegalArgumentException("O ID deve ser maior que zero.");
         }
 
-        if (contato.getNome() == null || contato.getNome().isBlank()) {
-            throw new IllegalArgumentException("O nome do contato é obrigatório.");
-        }
+        validarDadosObrigatorios(contato);
 
         if (repository.buscarPorId(contato.getId()).isEmpty()) {
             throw new IllegalArgumentException("Contato não encontrado.");

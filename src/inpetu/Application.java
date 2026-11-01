@@ -32,7 +32,12 @@ public class Application {
 
         // Dados de teste
         Contato contato1 = new Contato("Maria");
+        contato1.setCnpj("12345678000190");
+        contato1.setTelefone("48999990001");
+
         Contato contato2 = new Contato("João");
+        contato2.setCnpj("98765432000110");
+        contato2.setTelefone("48999990002");
 
         contatoService.gravar(contato1);
         contatoService.gravar(contato2);
@@ -114,6 +119,9 @@ public class Application {
         System.out.println("\n--- TESTE 5: Contatos ---");
 
         Contato contatoTeste = new Contato("Carlos");
+        contatoTeste.setCnpj("12345678000123");
+        contatoTeste.setTelefone("48999990003");
+
         contatoService.gravar(contatoTeste);
 
         System.out.println("Contato cadastrado: " + contatoTeste);
@@ -309,12 +317,18 @@ public class Application {
         System.out.println("\n--- TESTE 16: Atualizar contato ---");
 
         Contato contatoAtualizar = new Contato("Pedro");
+        contatoAtualizar.setCnpj("12345678000124");
+        contatoAtualizar.setTelefone("48999990004");
+
         contatoService.gravar(contatoAtualizar);
 
 // Criando uma versão atualizada do contato
         Contato contatoNovo = new Contato("Pedro Silva");
+        contatoNovo.setCnpj("12345678000124");
+        contatoNovo.setTelefone("48999990004");
         contatoNovo.setId(contatoAtualizar.getId());
 
+        contatoService.atualizar(contatoNovo);
         try {
             contatoService.atualizar(contatoNovo);
 
@@ -331,7 +345,15 @@ public class Application {
         System.out.println("\n--- TESTE 17: Listar contatos ---");
 
         Contato contatoLista1 = new Contato("Ana");
+        contatoLista1.setCnpj("12345678000125");
+        contatoLista1.setTelefone("48999990005");
+
         Contato contatoLista2 = new Contato("Lucas");
+        contatoLista2.setCnpj("12345678000126");
+        contatoLista2.setTelefone("48999990006");
+
+        contatoService.gravar(contatoLista1);
+        contatoService.gravar(contatoLista2);
 
         contatoService.gravar(contatoLista1);
         contatoService.gravar(contatoLista2);
