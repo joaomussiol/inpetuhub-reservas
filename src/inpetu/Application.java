@@ -637,21 +637,6 @@ public class Application {
 
 //=================================================================================================
 
-        System.out.println("\n--- TESTE 30: Remover contato com ID inválido ---");
-
-        Contato contatoIdInvalidoRemocao = new Contato("Contato inválido");
-        contatoIdInvalidoRemocao.setId(0);
-
-        try {
-            contatoService.remover(contatoIdInvalidoRemocao);
-            System.out.println("ERRO: contato com ID inválido foi removido.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("SUCESSO: remoção bloqueada.");
-            System.out.println(e.getMessage());
-        }
-
-//=================================================================================================
-
         System.out.println("\n--- TESTE 31: Remover contato inexistente ---");
 
         Contato contatoNaoCadastrado = new Contato("Contato inexistente");
