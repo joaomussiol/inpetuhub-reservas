@@ -52,6 +52,10 @@ public class ContatoMemoryRepository implements
             throw new IllegalArgumentException("Já existe um contato cadastrado com esse ID.");
         }
 
+        if (contato.getId() >= this.proximoId) {
+            this.proximoId = contato.getId() + 1;
+        }
+
         this.armazenamento.put(contato.getId(), contato);
     }
 
