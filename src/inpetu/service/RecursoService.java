@@ -43,6 +43,10 @@ public class RecursoService implements IRecursoService {
             throw new IllegalArgumentException("O nome do recurso é obrigatório.");
         }
 
+        if (repository.buscarPorId(recurso.getId()).isPresent()) {
+            throw new IllegalArgumentException("Já existe um recurso cadastrado com esse ID.");
+        }
+
         repository.gravar(recurso);
     }
 

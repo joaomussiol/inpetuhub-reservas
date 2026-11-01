@@ -174,6 +174,8 @@ public class Application {
         System.out.println("Após remoção: "
                 + recursoService.buscarPorId(10));
 
+
+
 //=================================================================================================
 
         System.out.println("\n--- TESTE 7: Recursos diferentes ---");
@@ -681,6 +683,24 @@ public class Application {
             System.out.println("SUCESSO: remoção bloqueada.");
             System.out.println(e.getMessage());
         }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 34: Bloquear cadastro de recurso com ID duplicado ---");
+
+        Recurso recursoDuplicado = new Recurso(
+                20, "Notebook", "Notebook para reuniões"
+        );
+
+        try {
+            recursoService.gravar(recursoDuplicado);
+            System.out.println("ERRO: O sistema permitiu um ID duplicado.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: " + e.getMessage());
+        }
+
+        System.out.println("Recurso original mantido: "
+                + recursoService.buscarPorId(20));
 
 //=================================================================================================
 
