@@ -4,50 +4,115 @@ Projeto acadêmico desenvolvido em Java para a unidade curricular de **Programa�
 
 ## Sobre o projeto
 
-O objetivo deste projeto é desenvolver um sistema para gerenciar contatos, recursos e reservas do InPETU Hub, como parte de uma atividade prática da faculdade.
+O Sistema de Reserva de Recursos do InPETU Hub tem como objetivo organizar o gerenciamento de contatos, recursos e reservas, aplicando conceitos de orientação a objetos e boas práticas de desenvolvimento de software.
 
-A aplicação busca organizar a lógica de cadastro e gerenciamento de recursos, permitindo controlar as reservas e verificar a disponibilidade dos recursos durante determinados períodos.
+A aplicação permite cadastrar e consultar informações, administrar alterações e controlar as reservas dos recursos, respeitando as regras de negócio estabelecidas para o sistema.
 
 ## Funcionalidades
 
-- **Contatos:** cadastro, consulta, edição e listagem.
-- **Recursos:** cadastro, consulta, edição e listagem de salas, auditórios e outros recursos.
-- **Reservas:** cadastro, consulta, edição e listagem de reservas.
-- **Validação de disponibilidade:** impedir reservas em períodos já ocupados.
-- **Regras de negócio:** impedir a exclusão de contatos e recursos vinculados a reservas.
+### Contatos
+- Cadastro de contatos.
+- Consulta por ID e nome.
+- Atualização de informações.
+- Listagem de contatos.
+- Validação de campos obrigatórios.
+- Bloqueio da exclusão de contatos vinculados a reservas.
 
-*As funcionalidades serão documentadas e atualizadas conforme o desenvolvimento do projeto.*
+### Recursos
+- Cadastro de recursos.
+- Consulta por ID.
+- Atualização de informações.
+- Listagem de recursos.
+- Bloqueio da exclusão de recursos vinculados a reservas.
+
+### Reservas
+- Cadastro de reservas.
+- Consulta por ID.
+- Atualização de reservas existentes.
+- Listagem de reservas.
+- Validação dos horários de início e término.
+- Verificação de disponibilidade dos recursos.
+- Bloqueio de reservas com horários conflitantes.
+- Validação da existência dos contatos e recursos associados.
 
 ## Tecnologias e conceitos
 
-- Java 25
-- Programação Orientada a Objetos (POO)
-- Princípios SOLID
-- Organização em camadas: Model, Repository e Service
-- Armazenamento em memória (*Memory Repository*)
+- **Java:** linguagem utilizada no desenvolvimento.
+- **Programação Orientada a Objetos (POO):** organização do sistema em classes e objetos.
+- **Princípios SOLID:** aplicados à organização e separação de responsabilidades.
+- **Arquitetura em camadas:** Model, Repository e Service.
+- **Memory Repository:** armazenamento de informações em memória, sem utilização de banco de dados nesta versão.
 
 ## Estrutura do projeto
 
-A organização inicial do código está dividida em camadas com responsabilidades distintas:
+```text
+src/
+└── inpetu/
+    ├── Application.java
+    ├── model/
+    │   ├── Agenda.java
+    │   ├── Contato.java
+    │   └── Recurso.java
+    ├── repository/
+    │   ├── IAgendaRepository.java
+    │   ├── IContatoRepository.java
+    │   ├── IRecursoRepository.java
+    │   └── memory/
+    │       ├── AgendaMemoryRepository.java
+    │       ├── ContatoMemoryRepository.java
+    │       └── RecursoMemoryRepository.java
+    └── service/
+        ├── AgendaService.java
+        ├── ContatoService.java
+        ├── RecursoService.java
+        ├── IAgendaService.java
+        ├── IContatoService.java
+        └── IRecursoService.java
+```
 
-- `model/` — classes que representam as entidades do sistema.
-- `memory repository/` — armazenamento e recuperação de dados em memória.
-- `service/` — implementação das regras de negócio e operações do sistema.
+### Responsabilidades das camadas
 
-A estrutura poderá evoluir conforme novas funcionalidades forem implementadas.
+- **Model:** representa as entidades e seus dados.
+- **Repository:** define e implementa as operações de armazenamento e recuperação.
+- **Service:** concentra as regras de negócio, validações e operações do sistema.
+- **Application:** inicializa a aplicação e executa os testes das funcionalidades.
 
 ## Execução
 
-O projeto está em desenvolvimento. As instruções para compilação e execução serão adicionadas conforme a estrutura de inicialização da aplicação for definida.
+O projeto pode ser executado por meio de uma IDE, como IntelliJ IDEA, utilizando a classe principal:
 
-## Objetivo acadêmico
+```text
+inpetu.Application
+```
 
-Este trabalho tem como finalidade aplicar os conceitos estudados em Programação Orientada a Objetos, praticando a modelagem de classes, a organização do código, a implementação de regras de negócio e o tratamento de erros.
+Também é possível compilar e executar pelo terminal Linux, a partir da pasta raiz do projeto:
 
-## Status
+```bash
+javac -d out $(find src -name "*.java")
+java -cp out inpetu.Application
+```
+
+É necessário ter o JDK instalado e configurado no ambiente.
+
+## Testes e validações
+
+A aplicação possui testes de execução implementados na classe `Application.java`, que demonstram o funcionamento das operações e das regras de negócio.
+
+Entre os cenários verificados estão:
+
+- Cadastro e atualização de registros.
+- Consultas e listagens.
+- Reservas com horários conflitantes.
+- Tentativas de utilização de contatos e recursos inexistentes.
+- Tentativas de exclusão de registros vinculados.
+- Validação de IDs e dados obrigatórios.
+
+## Status do projeto
 
 **Em desenvolvimento.**
 
+As funcionalidades implementadas são executadas e verificadas por meio dos testes presentes na aplicação.
+
 ---
 
-Projeto desenvolvido para fins educacionais no curso de Análise e Desenvolvimento de Sistemas.
+Projeto desenvolvido para fins acadêmicos no curso de Análise e Desenvolvimento de Sistemas.
