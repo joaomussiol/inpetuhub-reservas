@@ -1,7 +1,7 @@
-
 package inpetu.service;
 
 import inpetu.model.Contato;
+import inpetu.model.Agenda;
 import inpetu.repository.IContatoRepository;
 
 import java.util.List;
@@ -10,15 +10,23 @@ import java.util.Optional;
 public class ContatoService implements IContatoService {
 
     private final IContatoRepository repository;
+    private final IAgendaService agendaService;
 
-    public ContatoService(IContatoRepository repository) {
+    public ContatoService(IContatoRepository repository, IAgendaService agendaService) {
         if (repository == null) {
             throw new IllegalArgumentException(
                     "O repositório de contatos é obrigatório."
             );
         }
 
+        if (agendaService == null) {
+            throw new IllegalArgumentException(
+                    "O serviço de reservas é obrigatório."
+            );
+        }
+
         this.repository = repository;
+        this.agendaService = agendaService;
     }
 
     @Override
@@ -59,6 +67,17 @@ public class ContatoService implements IContatoService {
     public void remover(Contato contato) {
         if (contato == null) {
             throw new IllegalArgumentException("O contato não pode ser nulo.");
+        }
+
+        boolean possuiReserva = agendaService.listarTodos().stream()
+                .anyMatch(agenda ->
+                        agenda.getContato().getId() == contato.getId()
+                );
+
+        if (possuiReserva) {
+            throw new IllegalArgumentException(
+                    "Não é possível remover um contato vinculado a uma reserva."
+            );
         }
 
         repository.remover(contato);

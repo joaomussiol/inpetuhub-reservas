@@ -1,7 +1,7 @@
-
 package inpetu.service;
 
 import inpetu.model.Recurso;
+import inpetu.model.Agenda;
 import inpetu.repository.IRecursoRepository;
 
 import java.util.Optional;
@@ -10,15 +10,23 @@ import java.util.List;
 public class RecursoService implements IRecursoService {
 
     private final IRecursoRepository repository;
+    private final IAgendaService agendaService;
 
-    public RecursoService(IRecursoRepository repository) {
+    public RecursoService(IRecursoRepository repository, IAgendaService agendaService) {
         if (repository == null) {
             throw new IllegalArgumentException(
                     "O repositório de recursos é obrigatório."
             );
         }
 
+        if (agendaService == null) {
+            throw new IllegalArgumentException(
+                    "O serviço de reservas é obrigatório."
+            );
+        }
+
         this.repository = repository;
+        this.agendaService = agendaService;
     }
 
     @Override
@@ -42,6 +50,17 @@ public class RecursoService implements IRecursoService {
     public void remover(Recurso recurso) {
         if (recurso == null) {
             throw new IllegalArgumentException("O recurso não pode ser nulo.");
+        }
+
+        boolean possuiReserva = agendaService.listarTodos().stream()
+                .anyMatch(agenda ->
+                        agenda.getRecurso().getId() == recurso.getId()
+                );
+
+        if (possuiReserva) {
+            throw new IllegalArgumentException(
+                    "Não é possível remover um recurso vinculado a uma reserva."
+            );
         }
 
         repository.remover(recurso);

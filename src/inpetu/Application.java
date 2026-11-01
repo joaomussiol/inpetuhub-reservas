@@ -18,14 +18,17 @@ public class Application {
     public static void main(String[] args) {
 
         // Repositórios e serviços
-        ContatoService contatoService =
-                new ContatoService(new ContatoMemoryRepository());
+        AgendaService agendaService = new AgendaService(new AgendaMemoryRepository());
 
-        RecursoService recursoService =
-                new RecursoService(new RecursoMemoryRepository());
+        ContatoService contatoService = new ContatoService(
+                new ContatoMemoryRepository(),
+                agendaService
+        );
 
-        AgendaService agendaService =
-                new AgendaService(new AgendaMemoryRepository());
+        RecursoService recursoService = new RecursoService(
+                new RecursoMemoryRepository(),
+                agendaService
+        );
 
         // Dados de teste
         Contato contato1 = new Contato("Maria");
@@ -300,6 +303,118 @@ public class Application {
             System.out.println("ERRO: " + e.getMessage());
         }
 
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 16: Atualizar contato ---");
+
+        Contato contatoAtualizar = new Contato("Pedro");
+        contatoService.gravar(contatoAtualizar);
+
+// Criando uma versão atualizada do contato
+        Contato contatoNovo = new Contato("Pedro Silva");
+        contatoNovo.setId(contatoAtualizar.getId());
+
+        try {
+            contatoService.atualizar(contatoNovo);
+
+            System.out.println("SUCESSO: contato atualizado.");
+            System.out.println("Contato atualizado: "
+                    + contatoService.buscarPorId(contatoAtualizar.getId()));
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 17: Listar contatos ---");
+
+        Contato contatoLista1 = new Contato("Ana");
+        Contato contatoLista2 = new Contato("Lucas");
+
+        contatoService.gravar(contatoLista1);
+        contatoService.gravar(contatoLista2);
+
+        System.out.println("Total de contatos cadastrados: "
+                + contatoService.listarTodos().size());
+
+        contatoService.listarTodos().forEach(System.out::println);
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 18: Atualizar recurso ---");
+
+        Recurso recursoAtualizar = new Recurso(
+                20, "Projetor antigo", "Projetor básico"
+        );
+
+        recursoService.gravar(recursoAtualizar);
+
+// Criando o recurso atualizado
+        Recurso recursoNovo = new Recurso(
+                20, "Projetor Epson", "Projetor multimídia Full HD"
+        );
+
+        try {
+            recursoService.atualizar(recursoNovo);
+
+            System.out.println("SUCESSO: recurso atualizado.");
+            System.out.println("Recurso atualizado: "
+                    + recursoService.buscarPorId(20));
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("ERRO: " + e.getMessage());
+        }
+
+//=================================================================================================
+
+
+        System.out.println("\n--- TESTE 19: Listar recursos ---");
+
+        Recurso recursoLista1 = new Recurso(
+                21, "Notebook", "Notebook para apresentações"
+        );
+
+        Recurso recursoLista2 = new Recurso(
+                22, "Microfone", "Microfone sem fio"
+        );
+
+        recursoService.gravar(recursoLista1);
+        recursoService.gravar(recursoLista2);
+
+        System.out.println("Total de recursos cadastrados: "
+                + recursoService.listarTodos().size());
+
+        recursoService.listarTodos().forEach(System.out::println);
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 20: Remover contato vinculado ---");
+
+        try {
+            Contato contatoVinculado = contatoService.buscarPorId(1).orElseThrow();
+            contatoService.remover(contatoVinculado);
+
+            System.out.println("ERRO: o sistema permitiu remover um contato vinculado.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
+
+//=================================================================================================
+
+        System.out.println("\n--- TESTE 21: Remover recurso vinculado ---");
+
+        try {
+            Recurso recursoVinculado = recursoService.buscarPorId(1).orElseThrow();
+            recursoService.remover(recursoVinculado);
+
+            System.out.println("ERRO: o sistema permitiu remover um recurso vinculado.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("SUCESSO: remoção bloqueada.");
+            System.out.println(e.getMessage());
+        }
 
 //=================================================================================================
 
