@@ -60,12 +60,12 @@ public class AgendaService implements IAgendaService {
     public void atualizar(Agenda agenda) {
         validarAgenda(agenda);
 
-        if (repository.buscarPorId(agenda.getId()).isEmpty()) {
-            throw new IllegalArgumentException(
-                    "A reserva informada não está cadastrada."
-            );
-        }
+        Agenda existente = repository.buscarPorId(agenda.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "A reserva informada não está cadastrada."
+                ));
 
+        agenda.setCriadoEm(existente.getCriadoEm());
         repository.atualizar(agenda);
     }
 
