@@ -41,7 +41,8 @@ A aplicação permite cadastrar e consultar informações, administrar alteraç�
 - **Programação Orientada a Objetos (POO):** organização do sistema em classes e objetos.
 - **Princípios SOLID:** aplicados à organização e separação de responsabilidades.
 - **Arquitetura em camadas:** Model, Repository e Service.
-- **Memory Repository:** armazenamento de informações em memória, sem utilização de banco de dados nesta versão.
+- **Memory Repository:** armazenamento em memória, ainda utilizado pela aplicação principal.
+- **MySQL e JDBC:** banco e conexão preparados; repositórios MySQL ainda serão implementados.
 
 ## Estrutura do projeto
 
@@ -49,10 +50,15 @@ A aplicação permite cadastrar e consultar informações, administrar alteraç�
 src/
 └── inpetu/
     ├── Application.java
+    ├── database/
+    │   ├── ConexaoMySQL.java
+    │   └── TesteConexao.java
     ├── model/
     │   ├── Agenda.java
     │   ├── Contato.java
-    │   └── Recurso.java
+    │   ├── Recurso.java
+    │   ├── TipoContato.java
+    │   └── TipoEspaco.java
     ├── repository/
     │   ├── IAgendaRepository.java
     │   ├── IContatoRepository.java
@@ -93,6 +99,70 @@ java -cp out inpetu.Application
 ```
 
 É necessário ter o JDK instalado e configurado no ambiente.
+
+## Configuração da conexão MySQL
+
+O projeto usa o driver `lib/mysql-connector-j-9.7.0.jar`, sem Maven ou Gradle.
+As configurações do IntelliJ são locais e não estão no Git.
+
+### Driver no IntelliJ
+
+1. Abra **File → Project Structure → Modules → Dependencies**.
+2. Clique em **+ → JARs or Directories**.
+3. Selecione `lib/mysql-connector-j-9.7.0.jar` e confirme.
+
+### Banco e dados iniciais
+
+O MySQL deve estar rodando em `localhost:3306`, com o banco `inpetu_hub`.
+Para uma instalação nova, execute `sql/schema.sql` no Workbench e depois
+`sql/dados_iniciais.sql`. O segundo script cadastra 2 tipos de contato,
+6 tipos de espaço e 10 recursos. Execute-o apenas uma vez, com essas tabelas vazias.
+Se o banco já foi preparado, não execute os scripts novamente.
+
+### Variáveis de ambiente no IntelliJ
+
+1. Abra **Run → Edit Configurations…** e crie uma configuração **Application**.
+2. Defina a classe principal como `inpetu.database.TesteConexao` e use o módulo `InPETU`.
+3. Em **Environment variables**, adicione:
+
+   | Nome | Valor |
+   |---|---|
+   | `INPETU_DB_USUARIO` | Usuário do MySQL |
+   | `INPETU_DB_SENHA` | Senha desse usuário no MySQL |
+
+4. Deixe **Store as project file** desmarcado e salve.
+
+As variáveis precisam estar na configuração que executa o teste.
+Não coloque a senha no código, no README ou em arquivos enviados ao Git.
+
+### Teste da conexão
+
+Execute a configuração de `inpetu.database.TesteConexao`. Se funcionar, aparecerá:
+
+```text
+Conexão com o banco inpetu_hub realizada com sucesso!
+```
+
+O teste abre e fecha a conexão, sem consultar, inserir ou alterar registros.
+Em caso de falha, a exceção aparece no console.
+A classe `inpetu.Application` continua executando os cenários em memória.
+
+No terminal Linux, as variáveis precisam estar definidas na mesma sessão que
+executa o Java. Para preencher sem escrever a senha no comando ou no histórico:
+
+```bash
+read -r -p 'Usuário MySQL: ' INPETU_DB_USUARIO
+read -r -s -p 'Senha MySQL: ' INPETU_DB_SENHA
+echo
+export INPETU_DB_USUARIO INPETU_DB_SENHA
+```
+
+Depois, compile e execute o teste:
+
+```bash
+javac -encoding UTF-8 -cp 'lib/*' -d out $(find src -name '*.java')
+java -cp 'out:lib/*' inpetu.database.TesteConexao
+```
 
 ## Testes e validações
 
