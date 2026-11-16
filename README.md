@@ -199,6 +199,9 @@ Os métodos de cadastro, atualização e exclusão estão disponíveis nos servi
 - Agendas exigem contato e recurso cadastrados e início anterior ao fim, sem frações de segundo nesses dois horários.
 - A data de criação salva é preservada nas atualizações. O banco armazena as datas com precisão de segundos.
 - Os serviços bloqueiam conflitos de horário e a exclusão de contatos e recursos vinculados a agendas.
+- O serviço de agendas consulta o estado do recurso no repositório e bloqueia cadastro e atualização com recurso inativo.
+  Agendas existentes continuam disponíveis para consulta e exclusão, e podem ser transferidas para um recurso ativo.
+  Desativar um recurso não apaga suas agendas; reativá-lo permite novos cadastros e atualizações.
 
 ## Testes e validações
 
@@ -219,9 +222,28 @@ removidos ao final, e compararam os dados das cinco tabelas antes e depois.
 Esses testes temporários não fazem parte dos 35 cenários da `Application`
 e não estão versionados no projeto.
 
+### Resultados da Fase E
+
+| Teste | Resultado |
+|---|---|
+| Persistência entre processos Java separados | Um processo cadastrou contato, recurso e agenda e encerrou. Outro processo recuperou os registros pelos IDs, conferindo campos, tipos, vínculos e `criadoEm`, sem recadastrar os dados. |
+| Quatro chaves estrangeiras | As 12 tentativas inválidas foram bloqueadas pelo MySQL: inclusão e atualização com vínculo inexistente (erro 1452), além da exclusão de registros vinculados (erro 1451), para cada relação. |
+| Exclusão na ordem das dependências | A exclusão dos registros fictícios foi permitida após remover seus vínculos. O teste das chaves estrangeiras terminou com a transação desfeita. |
+| Recursos inativos em memória | As 20 verificações específicas passaram, assim como os 35 cenários existentes da `Application`. |
+| Recursos inativos no MySQL | As 16 verificações passaram: bloqueio de cadastro e atualização, consulta do estado salvo mesmo com objeto desatualizado, transferência para recurso ativo, preservação de `criadoEm`, consulta, exclusão e reativação. |
+
+Os testes da Fase E foram preparados e executados em `/tmp`, usando registros
+fictícios. Ao final, todos os registros de teste foram removidos ou desfeitos,
+e a comparação das cinco tabelas confirmou a preservação dos dados anteriores.
+As sequências `AUTO_INCREMENT` podem ter avançado, inclusive nas operações
+rejeitadas ou desfeitas. A estrutura do banco não foi alterada.
+
+A persistência foi comprovada após encerrar e iniciar processos Java separados.
+O servidor MySQL não foi reiniciado nesse teste.
+Os testes temporários da Fase E também não estão versionados no projeto.
+
 ### Pendências e limitações
 
-- Comprovar a persistência entre execuções separadas da aplicação na Fase E.
 - A verificação de conflitos consulta as agendas existentes e cobre operações sequenciais.
   Ainda não há proteção transacional contra duas reservas simultâneas para o mesmo recurso.
 - Os repositórios de tipos oferecem apenas consulta por ID e listagem; o cadastro inicial é feito pelo SQL.
@@ -233,8 +255,10 @@ e não estão versionados no projeto.
 
 Repositórios MySQL implementados e integrados aos serviços, com execução em memória preservada.
 O modo `--mysql` e os testes funcionais básicos de integração foram verificados.
-A documentação e a implementação da Fase D estão preparadas para revisão e versionamento;
-as verificações restantes de persistência fazem parte da Fase E.
+As Fases A a D foram concluídas e versionadas. Os testes funcionais da Fase E
+foram concluídos, incluindo persistência entre processos, chaves estrangeiras
+e a regra de recursos inativos. O ajuste dessa regra e a documentação dos
+resultados estão preparados para revisão e versionamento.
 
 ---
 

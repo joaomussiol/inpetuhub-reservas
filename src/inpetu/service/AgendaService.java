@@ -2,6 +2,7 @@
 package inpetu.service;
 
 import inpetu.model.Agenda;
+import inpetu.model.Recurso;
 import inpetu.repository.IAgendaRepository;
 import inpetu.repository.IContatoRepository;
 import inpetu.repository.IRecursoRepository;
@@ -101,13 +102,19 @@ public class AgendaService implements IAgendaService {
             );
         }
 
-        if (agenda.getRecurso().getId() <= 0
-                || recursoRepository.buscarPorId(
-                agenda.getRecurso().getId()
-        ).isEmpty()) {
+        if (agenda.getRecurso().getId() <= 0) {
             throw new IllegalArgumentException(
                     "O recurso informado não está cadastrado."
             );
+        }
+
+        Recurso recursoCadastrado = recursoRepository.buscarPorId(agenda.getRecurso().getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "O recurso informado não está cadastrado."
+                ));
+
+        if (!recursoCadastrado.isAtivo()) {
+            throw new IllegalArgumentException("O recurso informado está inativo.");
         }
 
         if (agenda.getInicio() == null || agenda.getFim() == null) {
