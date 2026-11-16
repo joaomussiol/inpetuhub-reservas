@@ -4,18 +4,30 @@ package inpetu;
 import inpetu.model.Agenda;
 import inpetu.model.Contato;
 import inpetu.model.Recurso;
+import inpetu.repository.IAgendaRepository;
+import inpetu.repository.IContatoRepository;
+import inpetu.repository.IRecursoRepository;
 import inpetu.repository.memory.AgendaMemoryRepository;
 import inpetu.repository.memory.ContatoMemoryRepository;
 import inpetu.repository.memory.RecursoMemoryRepository;
+import inpetu.repository.mysql.AgendaMySQLRepository;
+import inpetu.repository.mysql.ContatoMySQLRepository;
+import inpetu.repository.mysql.RecursoMySQLRepository;
 import inpetu.service.AgendaService;
 import inpetu.service.ContatoService;
 import inpetu.service.RecursoService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Application {
 
     public static void main(String[] args) {
+
+        if (args.length > 0 && "--mysql".equals(args[0])) {
+            executarMySQL();
+            return;
+        }
 
 // Repositórios
         AgendaMemoryRepository agendaRepository =
@@ -736,4 +748,29 @@ public class Application {
 
     }
 
+    private static void executarMySQL() {
+        IAgendaRepository agendaRepository = new AgendaMySQLRepository();
+        IContatoRepository contatoRepository = new ContatoMySQLRepository();
+        IRecursoRepository recursoRepository = new RecursoMySQLRepository();
+
+        AgendaService agendaService = new AgendaService(
+                agendaRepository, contatoRepository, recursoRepository
+        );
+        ContatoService contatoService = new ContatoService(contatoRepository, agendaService);
+        RecursoService recursoService = new RecursoService(recursoRepository, agendaService);
+
+        System.out.println("--- MySQL: consulta dos dados existentes ---");
+
+        List<Contato> contatos = contatoService.listarTodos();
+        System.out.println("\nContatos cadastrados: " + contatos.size());
+        contatos.forEach(System.out::println);
+
+        List<Recurso> recursos = recursoService.listarTodos();
+        System.out.println("\nRecursos cadastrados: " + recursos.size());
+        recursos.forEach(System.out::println);
+
+        List<Agenda> agendas = agendaService.listarTodos();
+        System.out.println("\nAgendas cadastradas: " + agendas.size());
+        agendas.forEach(System.out::println);
+    }
 }

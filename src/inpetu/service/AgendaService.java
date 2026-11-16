@@ -47,12 +47,13 @@ public class AgendaService implements IAgendaService {
     public void gravar(Agenda agenda) {
         validarAgenda(agenda);
 
-        if (repository.buscarPorId(agenda.getId()).isPresent()) {
+        if (agenda.getId() > 0 && repository.buscarPorId(agenda.getId()).isPresent()) {
             throw new IllegalArgumentException(
                     "Já existe uma reserva cadastrada com esse ID."
             );
         }
 
+        validarConflitos(agenda, false);
         repository.gravar(agenda);
     }
 
@@ -60,11 +61,16 @@ public class AgendaService implements IAgendaService {
     public void atualizar(Agenda agenda) {
         validarAgenda(agenda);
 
+        if (agenda.getId() == 0) {
+            throw new IllegalArgumentException("O ID deve ser maior que zero.");
+        }
+
         Agenda existente = repository.buscarPorId(agenda.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         "A reserva informada não está cadastrada."
                 ));
 
+        validarConflitos(agenda, true);
         agenda.setCriadoEm(existente.getCriadoEm());
         repository.atualizar(agenda);
     }
@@ -74,8 +80,8 @@ public class AgendaService implements IAgendaService {
             throw new IllegalArgumentException("A reserva não pode ser nula.");
         }
 
-        if (agenda.getId() <= 0) {
-            throw new IllegalArgumentException("O ID deve ser maior que zero.");
+        if (agenda.getId() < 0) {
+            throw new IllegalArgumentException("O ID não pode ser negativo.");
         }
 
         if (agenda.getContato() == null) {
@@ -108,14 +114,23 @@ public class AgendaService implements IAgendaService {
             throw new IllegalArgumentException("Os horários são obrigatórios.");
         }
 
+        if (agenda.getInicio().getNano() != 0 || agenda.getFim().getNano() != 0) {
+            throw new IllegalArgumentException(
+                    "O início e o fim devem ser informados sem frações de segundo."
+            );
+        }
+
         if (!agenda.getInicio().isBefore(agenda.getFim())) {
             throw new IllegalArgumentException(
                     "O início deve ser anterior ao fim da reserva."
             );
         }
 
+    }
+
+    private void validarConflitos(Agenda agenda, boolean atualizacao) {
         boolean conflito = repository.listarTodos().stream()
-                .filter(existente -> existente.getId() != agenda.getId())
+                .filter(existente -> !atualizacao || existente.getId() != agenda.getId())
                 .filter(existente ->
                         existente.getRecurso().getId()
                                 == agenda.getRecurso().getId())

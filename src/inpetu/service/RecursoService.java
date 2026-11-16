@@ -35,15 +35,13 @@ public class RecursoService implements IRecursoService {
             throw new IllegalArgumentException("O recurso não pode ser nulo.");
         }
 
-        if (recurso.getId() <= 0) {
-            throw new IllegalArgumentException("O ID deve ser maior que zero.");
+        if (recurso.getId() < 0) {
+            throw new IllegalArgumentException("O ID não pode ser negativo.");
         }
 
-        if (recurso.getNome() == null || recurso.getNome().isBlank()) {
-            throw new IllegalArgumentException("O nome do recurso é obrigatório.");
-        }
+        validarDadosObrigatorios(recurso);
 
-        if (repository.buscarPorId(recurso.getId()).isPresent()) {
+        if (recurso.getId() > 0 && repository.buscarPorId(recurso.getId()).isPresent()) {
             throw new IllegalArgumentException("Já existe um recurso cadastrado com esse ID.");
         }
 
@@ -108,14 +106,22 @@ public class RecursoService implements IRecursoService {
             throw new IllegalArgumentException("O ID deve ser maior que zero.");
         }
 
-        if (recurso.getNome() == null || recurso.getNome().isBlank()) {
-            throw new IllegalArgumentException("O nome do recurso é obrigatório.");
-        }
+        validarDadosObrigatorios(recurso);
 
         if (repository.buscarPorId(recurso.getId()).isEmpty()) {
             throw new IllegalArgumentException("Recurso não encontrado.");
         }
 
         repository.atualizar(recurso);
+    }
+
+    private void validarDadosObrigatorios(Recurso recurso) {
+        if (recurso.getNome() == null || recurso.getNome().isBlank()) {
+            throw new IllegalArgumentException("O nome do recurso é obrigatório.");
+        }
+
+        if (recurso.getCapacidade() < 0) {
+            throw new IllegalArgumentException("A capacidade não pode ser negativa.");
+        }
     }
 }

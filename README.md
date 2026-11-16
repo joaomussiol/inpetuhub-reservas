@@ -41,8 +41,8 @@ A aplicação permite cadastrar e consultar informações, administrar alteraç�
 - **Programação Orientada a Objetos (POO):** organização do sistema em classes e objetos.
 - **Princípios SOLID:** aplicados à organização e separação de responsabilidades.
 - **Arquitetura em camadas:** Model, Repository e Service.
-- **Memory Repository:** armazenamento em memória, ainda utilizado pela aplicação principal.
-- **MySQL e JDBC:** banco e conexão preparados; repositórios MySQL ainda serão implementados.
+- **Memory Repository:** armazenamento em memória, usado nos cenários da aplicação sem argumentos.
+- **MySQL e JDBC:** repositórios de contatos, recursos e agendas, além de consultas aos tipos de contato e espaço.
 
 ## Estrutura do projeto
 
@@ -63,10 +63,18 @@ src/
     │   ├── IAgendaRepository.java
     │   ├── IContatoRepository.java
     │   ├── IRecursoRepository.java
-    │   └── memory/
-    │       ├── AgendaMemoryRepository.java
-    │       ├── ContatoMemoryRepository.java
-    │       └── RecursoMemoryRepository.java
+    │   ├── ITipoContatoRepository.java
+    │   ├── ITipoEspacoRepository.java
+    │   ├── memory/
+    │   │   ├── AgendaMemoryRepository.java
+    │   │   ├── ContatoMemoryRepository.java
+    │   │   └── RecursoMemoryRepository.java
+    │   └── mysql/
+    │       ├── AgendaMySQLRepository.java
+    │       ├── ContatoMySQLRepository.java
+    │       ├── RecursoMySQLRepository.java
+    │       ├── TipoContatoMySQLRepository.java
+    │       └── TipoEspacoMySQLRepository.java
     └── service/
         ├── AgendaService.java
         ├── ContatoService.java
@@ -94,11 +102,12 @@ inpetu.Application
 Também é possível compilar e executar pelo terminal Linux, a partir da pasta raiz do projeto:
 
 ```bash
-javac -d out $(find src -name "*.java")
+javac -encoding UTF-8 -cp 'lib/*' -d out $(find src -name '*.java')
 java -cp out inpetu.Application
 ```
 
 É necessário ter o JDK instalado e configurado no ambiente.
+Sem argumentos, a aplicação executa os 35 cenários em memória, sem acessar o MySQL.
 
 ## Configuração da conexão MySQL
 
@@ -145,7 +154,7 @@ Conexão com o banco inpetu_hub realizada com sucesso!
 
 O teste abre e fecha a conexão, sem consultar, inserir ou alterar registros.
 Em caso de falha, a exceção aparece no console.
-A classe `inpetu.Application` continua executando os cenários em memória.
+A classe `inpetu.Application`, sem argumentos, continua executando os cenários em memória.
 
 No terminal Linux, as variáveis precisam estar definidas na mesma sessão que
 executa o Java. Para preencher sem escrever a senha no comando ou no histórico:
@@ -164,6 +173,33 @@ javac -encoding UTF-8 -cp 'lib/*' -d out $(find src -name '*.java')
 java -cp 'out:lib/*' inpetu.database.TesteConexao
 ```
 
+### Executar a aplicação com MySQL
+
+No IntelliJ, crie uma configuração para `inpetu.Application`, informe `--mysql`
+em **Program arguments** e preencha as variáveis de ambiente nessa configuração.
+Mantenha **Store as project file** desmarcado.
+
+No terminal Linux, após compilar e definir as variáveis:
+
+```bash
+java -cp 'out:lib/*' inpetu.Application --mysql
+```
+
+Esse modo apenas lista contatos, recursos e agendas existentes por meio dos serviços.
+Ele não cadastra os dados de teste da execução em memória nem oferece um menu de cadastro.
+Os métodos de cadastro, atualização e exclusão estão disponíveis nos serviços.
+
+### Regras da integração
+
+- Contatos precisam de nome e pelo menos CPF ou CNPJ; telefone é opcional.
+- Recursos precisam de nome e capacidade não negativa. Capacidade zero é permitida.
+- No MySQL, contatos e recursos precisam estar vinculados a tipos existentes.
+- Novos registros no MySQL devem começar com ID zero; o banco gera o ID e o repositório o atribui ao objeto.
+- Os repositórios em memória de contatos, recursos e agendas também geram IDs para objetos com ID zero e preservam IDs manuais positivos.
+- Agendas exigem contato e recurso cadastrados e início anterior ao fim, sem frações de segundo nesses dois horários.
+- A data de criação salva é preservada nas atualizações. O banco armazena as datas com precisão de segundos.
+- Os serviços bloqueiam conflitos de horário e a exclusão de contatos e recursos vinculados a agendas.
+
 ## Testes e validações
 
 A aplicação possui testes de execução implementados na classe `Application.java`, que demonstram o funcionamento das operações e das regras de negócio.
@@ -177,11 +213,28 @@ Entre os cenários verificados estão:
 - Tentativas de exclusão de registros vinculados.
 - Validação de IDs e dados obrigatórios.
 
+Também foram executados testes temporários em memória e no MySQL para os
+repositórios e serviços. Os testes de integração usaram registros fictícios,
+removidos ao final, e compararam os dados das cinco tabelas antes e depois.
+Esses testes temporários não fazem parte dos 35 cenários da `Application`
+e não estão versionados no projeto.
+
+### Pendências e limitações
+
+- Comprovar a persistência entre execuções separadas da aplicação na Fase E.
+- A verificação de conflitos consulta as agendas existentes e cobre operações sequenciais.
+  Ainda não há proteção transacional contra duas reservas simultâneas para o mesmo recurso.
+- Os repositórios de tipos oferecem apenas consulta por ID e listagem; o cadastro inicial é feito pelo SQL.
+- Interface gráfica, otimização de consultas e testes de desempenho ficam para as etapas correspondentes.
+
 ## Status do projeto
 
 **Em desenvolvimento.**
 
-As funcionalidades implementadas são executadas e verificadas por meio dos testes presentes na aplicação.
+Repositórios MySQL implementados e integrados aos serviços, com execução em memória preservada.
+O modo `--mysql` e os testes funcionais básicos de integração foram verificados.
+A documentação e a implementação da Fase D estão preparadas para revisão e versionamento;
+as verificações restantes de persistência fazem parte da Fase E.
 
 ---
 

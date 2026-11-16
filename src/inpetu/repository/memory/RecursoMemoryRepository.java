@@ -13,12 +13,31 @@ import java.util.ArrayList;
 public class RecursoMemoryRepository implements IRecursoRepository {
 
     private final Map<Integer, Recurso> armazenamento = new HashMap<>();
+    private int proximoId = 1;
 
     @Override
     public void gravar(Recurso recurso) {
-        if (recurso != null) {
-            armazenamento.put(recurso.getId(), recurso);
+        if (recurso == null) {
+            throw new IllegalArgumentException("O recurso não pode ser nulo.");
         }
+
+        if (recurso.getId() < 0) {
+            throw new IllegalArgumentException("O ID não pode ser negativo.");
+        }
+
+        if (recurso.getId() == 0) {
+            recurso.setId(proximoId++);
+        }
+
+        if (armazenamento.containsKey(recurso.getId())) {
+            throw new IllegalArgumentException("Já existe um recurso cadastrado com esse ID.");
+        }
+
+        if (recurso.getId() >= proximoId) {
+            proximoId = recurso.getId() + 1;
+        }
+
+        armazenamento.put(recurso.getId(), recurso);
     }
 
     @Override

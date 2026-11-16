@@ -34,12 +34,11 @@ public class ContatoService implements IContatoService {
             throw new IllegalArgumentException("O nome do contato é obrigatório.");
         }
 
-        if (contato.getCnpj() == null || contato.getCnpj().isBlank()) {
-            throw new IllegalArgumentException("O CNPJ do contato é obrigatório.");
-        }
+        boolean cpfVazio = contato.getCpf() == null || contato.getCpf().isBlank();
+        boolean cnpjVazio = contato.getCnpj() == null || contato.getCnpj().isBlank();
 
-        if (contato.getTelefone() == null || contato.getTelefone().isBlank()) {
-            throw new IllegalArgumentException("O telefone do contato é obrigatório.");
+        if (cpfVazio && cnpjVazio) {
+            throw new IllegalArgumentException("Informe pelo menos um CPF ou CNPJ para o contato.");
         }
     }
 
